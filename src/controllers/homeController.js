@@ -64,10 +64,7 @@ let deleteCRUD = async (req, res) => {
   }
   await CRUDService.deleteUserById(id);
 };
-// object: {
-//     key: '',
-//     value: ''
-// }
+
 module.exports = {
   getHomePage: getHomePage,
   getAboutPage: getAboutPage,
