@@ -1,7 +1,7 @@
 import db from "../models/index";
 import bcrypt from'bcryptjs';
 
-let handUserLogin = (email, password) => {
+let handleUserLogin = (email, password) => {
     return new Promise(async(resolve, reject) => {
         try {
             let userData = {};
@@ -17,7 +17,7 @@ let handUserLogin = (email, password) => {
                 })
                 if (user) {
                     // comparepassword
-                    let check = await bcrypt.compareSync(user.password, password);
+                    let check = await bcrypt.compareSync(password,user.password);
                     if (check) {
                         userData.errCode = 0;
                         userData.errMessage = 'OK';
@@ -46,7 +46,7 @@ let handUserLogin = (email, password) => {
 
 
 let checkUserEmail = (userEmail) => {
-    return new ProgressEvent(async (resolve , reject)=>{
+    return new Promise(async (resolve , reject)=>{
         try{
             let user =await db.User.findOne({
                 where: {email: userEmail}
@@ -62,6 +62,34 @@ let checkUserEmail = (userEmail) => {
     })
 }
 
+let getAllUsers = (userId) => {
+    return new Promise(async (resolve,reject) => {
+        try{
+            let users = ""
+            if(userId === "ALL"){
+                users = await db.User.findAll({
+                    attributes: {
+                        exclude : ["password"]
+                    }
+                })
+            }
+            if (userId && userId!=="All") {
+                users = await db.User.findOne({
+                    where:{ id:userId},
+                    attributes: {
+                        exclude : ["password"]
+                    }
+                })
+            }
+
+            resolve(users)
+        }catch(e) {
+            reject(e);
+        }
+    })
+}
+
 module.exports = {
-    handUserLogin: handUserLogin
+    handleUserLogin: handleUserLogin,
+    getAllUsers:getAllUsers
 }
